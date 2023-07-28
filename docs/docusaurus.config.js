@@ -14,7 +14,7 @@ const config = {
     url: 'https://yalejian.github.io',
     // Set the /<baseUrl>/ pathname under which your site is served
     // For GitHub pages deployment, it is often '/<projectName>/'
-    baseUrl: '/yale-js-tools-doc',
+    baseUrl: '/yale-js-tools',
 
     // GitHub pages deployment config.
     // If you aren't using GitHub pages, you don't need these.
