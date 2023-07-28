@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkyale_js_tools_doc=self.webpackChunkyale_js_tools_doc||[]).push([[4288],{5753:s=>{s.exports=JSON.parse('{"label":"docusaurus","permalink":"/yale-js-tools-doc/blog/tags/docusaurus","allTagsPath":"/yale-js-tools-doc/blog/tags","count":4}')}}]);

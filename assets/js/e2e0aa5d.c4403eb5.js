@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkyale_js_tools_doc=self.webpackChunkyale_js_tools_doc||[]).push([[2908],{4313:o=>{o.exports=JSON.parse('{"permalink":"/yale-js-tools-doc/blog/tags/docusaurus","page":1,"postsPerPage":10,"totalPages":1,"totalCount":4,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);
