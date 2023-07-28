@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkyale_js_tools_doc=self.webpackChunkyale_js_tools_doc||[]).push([[2254],{249:o=>{o.exports=JSON.parse('{"permalink":"/yale-js-tools-doc/blog/tags/hello","page":1,"postsPerPage":10,"totalPages":1,"totalCount":2,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);
