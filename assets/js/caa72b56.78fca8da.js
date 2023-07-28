@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunksimple_js_tools_doc=self.webpackChunksimple_js_tools_doc||[]).push([[3717],{5557:s=>{s.exports=JSON.parse('{"label":"hola","permalink":"/simple-js-tools/blog/tags/hola","allTagsPath":"/simple-js-tools/blog/tags","count":1}')}}]);

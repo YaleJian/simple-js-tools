@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunksimple_js_tools_doc=self.webpackChunksimple_js_tools_doc||[]).push([[2017],{415:s=>{s.exports=JSON.parse('{"label":"docusaurus","permalink":"/simple-js-tools/blog/tags/docusaurus","allTagsPath":"/simple-js-tools/blog/tags","count":4}')}}]);

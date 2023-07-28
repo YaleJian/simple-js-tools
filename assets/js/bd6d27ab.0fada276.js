@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkyale_js_tools_doc=self.webpackChunkyale_js_tools_doc||[]).push([[6968],{2129:o=>{o.exports=JSON.parse('{"label":"facebook","permalink":"/yale-js-tools/blog/tags/facebook","allTagsPath":"/yale-js-tools/blog/tags","count":1}')}}]);
