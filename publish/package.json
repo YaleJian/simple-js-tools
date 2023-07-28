@@ -1,5 +1,5 @@
 {
-  "name": "yale-js-tools",
+  "name": "simple-js-tools",
   "version": "1.0.0-beta.2",
   "description": "Yale的Javascript工具集",
   "main": "index.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/YaleJian/yale-js-tools.git"
+    "url": "git+https://github.com/YaleJian/simple-js-tools.git"
   },
   "keywords": [
     "Javascript",
@@ -21,7 +21,7 @@
   "author": "扬歌YaleJian",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/YaleJian/yale-js-tools/issues"
+    "url": "https://github.com/YaleJian/simple-js-tools/issues"
   },
-  "homepage": "https://github.com/YaleJian/yale-js-tools#readme"
+  "homepage": "https://github.com/YaleJian/simple-js-tools#readme"
 }

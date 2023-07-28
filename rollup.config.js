@@ -14,7 +14,7 @@ let config = (format, filePrefix) => {
     return {
         input: './src/index.js',
         output: {
-            file: `${filePrefix}yale-js-tools${format === 'iife' ? '' : `.${format}`}.js`,
+            file: `${filePrefix}simple-js-tools${format === 'iife' ? '' : `.${format}`}.js`,
             format: format,
             name: 'miniSDK',
             compact: true,

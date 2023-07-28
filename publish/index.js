@@ -1,2 +1,2 @@
-import tools from "./dist/yale-js-tools.es";
+import tools from "./dist/simple-js-tools.es";
 export default tools

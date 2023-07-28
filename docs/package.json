@@ -1,6 +1,6 @@
 {
-  "name": "yale-js-tools-doc",
-  "version": "1.0.0-beta.2",
+  "name": "simple-js-tools-doc",
+  "version": "1.0.0-beta.1",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",

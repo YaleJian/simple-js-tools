@@ -1,12 +1,12 @@
 # Javascrip 工具集
 
 ```npm
-npm i yale-js-tools
+npm i simple-js-tools
 ```
 
 ## 使用案例
 ```javascript
-import tools from 'yale-js-tools'
+import tools from 'simple-js-tools'
 const {xhr, object} = tools
 
 //深拷贝

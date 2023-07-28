@@ -14,12 +14,12 @@ const config = {
     url: 'https://yalejian.github.io',
     // Set the /<baseUrl>/ pathname under which your site is served
     // For GitHub pages deployment, it is often '/<projectName>/'
-    baseUrl: '/yale-js-tools',
+    baseUrl: '/simple-js-tools',
 
     // GitHub pages deployment config.
     // If you aren't using GitHub pages, you don't need these.
     organizationName: 'yalejian', // Usually your GitHub org/user name.
-    projectName: 'yale-js-tools', // Usually your repo name.
+    projectName: 'simple-js-tools', // Usually your repo name.
     deploymentBranch: 'gh-pages',
     trailingSlash: false,
 
@@ -47,14 +47,14 @@ const config = {
                     // Please change this to your repo.
                     // Remove this to remove the "edit this page" links.
                     editUrl:
-                        'https://github.com/YaleJian/yale-js-tools',
+                        'https://github.com/YaleJian/simple-js-tools',
                 },
                 blog: {
                     showReadingTime: true,
                     // Please change this to your repo.
                     // Remove this to remove the "edit this page" links.
                     editUrl:
-                        'https://github.com/YaleJian/yale-js-tools',
+                        'https://github.com/YaleJian/simple-js-tools',
                 },
                 theme: {
                     customCss: require.resolve('./src/css/custom.css'),
@@ -76,7 +76,7 @@ const config = {
             announcementBar: {
                 id: 'support_us',
                 content:
-                    '编码不易，给个星星支持下吧 <a target="_blank" rel="noopener noreferrer" href="https://github.com/YaleJian/yale-js-tools">GitHub</a>',
+                    '编码不易，给个星星支持下吧 <a target="_blank" rel="noopener noreferrer" href="https://github.com/YaleJian/simple-js-tools">GitHub</a>',
                 backgroundColor: '#fafbfc',
                 textColor: '#091E42',
                 isCloseable: false,
