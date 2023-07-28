@@ -1,4 +1,4 @@
-# Javascrip 工具集
+# Javascript 工具集
 
 ```npm
 npm i simple-js-tools
