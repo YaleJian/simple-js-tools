@@ -4,86 +4,27 @@
 npm i simple-js-tools
 ```
 
-## 使用案例
+## 安装
+
+### 通过 npm 安装
+在现有项目中使用 simple-js-tools 时，可以通过 npm 进行安装
+```bash
+npm i simple-js-tools
+```
+当然，你也可以通过 yarn 或 pnpm 进行安装：
+```bash
+# 通过 yarn 安装
+yarn add simple-js-tools
+
+# 通过 pnpm 安装
+pnpm add simple-js-tools
+```
+
+
+### 通过 CDN 安装
+使用 simple-js-tools 最简单的方法是直接在 HTML 文件中引入 CDN 链接，之后你可以通过全局变量 sTools 访问到所有方法。
+
 ```javascript
-import tools from 'simple-js-tools'
-const {xhr, object} = tools
-
-//深拷贝
-let str1 = {
-    a: {
-        a: 1,
-        b: {
-            a: 1
-        },
-        c: 1,
-        d: [1, 1, 1]
-    },
-    b: {
-        b: 2
-    },
-    c: 2
-}
-
-let str2 = {
-    a: {
-        a: 2,
-        b: 2,
-        c: {
-            a: 2
-        },
-        d: [2, 2, 2]
-    },
-    b: {
-        a: 2,
-        b: 2
-    },
-}
-
-let str3 ={
-    a:{
-        a: 1,
-        b:{
-            a:2
-        },
-        c:2
-    }
-}
-let str4 = {
-    a:{
-        a: 2
-    }
-}
-
-console.log(object.deepCopy(str1, str2))
-Object.prototype.deepCopy = object.deepCopy
-console.log(str1.deepCopy(str2))
-console.log(str3.deepCopy(str4))
-
-
-// 重写XHR，代理请求
-xhr.proxy = xhr => new Promise((resolve, reject) => {
-    xhr.response = xhr.responseText = JSON.stringify({...{hook: "响应数据已修改！"}})
-    resolve(xhr)
-})
-window.XMLHttpRequest = xhr
-
-doXHR()
-
-function doXHR() {
-    let xhr = new XMLHttpRequest();
-    xhr.open("post", "http://y.cc", true); // 异步请求
-    xhr.setRequestHeader("Content-type", "application/json")
-    xhr.send(JSON.stringify({id: 1}));
-
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) { // 监听请求完成
-            if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 304) {
-                console.log(xhr.response)
-            } else {
-
-            }
-        }
-    }
-}
+<script src="https://unpkg.com/browse/simple-js-tools@1.0.0-beta.3/dist/simple-js-tools.js">
+</script>
 ```

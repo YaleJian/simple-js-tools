@@ -6,8 +6,8 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-    title: 'Yale JS Tools',
-    tagline: '轻量的Javascript工具包',
+    title: 'Simple JS Tools',
+    tagline: '简单的Javascript工具包',
     favicon: 'img/favicon.ico',
 
     // Set the production url of your site here
@@ -55,6 +55,8 @@ const config = {
                     // Remove this to remove the "edit this page" links.
                     editUrl:
                         'https://github.com/YaleJian/simple-js-tools',
+                    blogSidebarTitle: '最新文章',
+                    blogSidebarCount: 0,
                 },
                 theme: {
                     customCss: require.resolve('./src/css/custom.css'),
@@ -73,24 +75,24 @@ const config = {
                 disableSwitch: false,
                 respectPrefersColorScheme: true,
             },
-            announcementBar: {
+            /*announcementBar: {
                 id: 'support_us',
                 content:
                     '编码不易，给个星星支持下吧 <a target="_blank" rel="noopener noreferrer" href="https://github.com/YaleJian/simple-js-tools">GitHub</a>',
                 backgroundColor: '#fafbfc',
                 textColor: '#091E42',
                 isCloseable: false,
-            },
+            },*/
             tableOfContents: {
                 minHeadingLevel: 2,
                 maxHeadingLevel: 6,
             },
             navbar: {
-                title: 'Yale JS Tools',
+                title: 'Simple JS Tools',
                 logo: {
-                    alt: 'Yale JS Tools',
-                    src: 'img/logo.svg',
-                    srcDark: 'img/logo_dark.svg',
+                    alt: 'Simple JS Tools',
+                    src: 'img/favicon.ico',
+                    srcDark: 'img/favicon.ico',
                     href: '/',
                     target: '_self',
                     width: 32,
@@ -102,78 +104,74 @@ const config = {
                 items: [
                     {
                         type: 'docSidebar',
-                        sidebarId: 'tutorialSidebar',
-                        position: 'left',
-                        label: 'Tutorial',
-                    },
-                    {
-                        type: 'docSidebar',
                         sidebarId: 'apiSidebar',
                         position: 'left',
-                        label: 'API',
+                        label: 'API参考',
                     },
-                    {to: '/blog', label: '更新日志', position: 'left'},
+                    {to: '/blog', label: '相关文章', position: 'left'},
                     {
                         type: 'search',
                         position: 'left',
                     },
+                    /*
                     {
                         type: 'docsVersionDropdown',
                         position: 'right',
                         dropdownItemsAfter: [{to: '/docs/API/intro', label: '1.0.0-beta.2'}],
                         dropdownActiveClassDisabled: false,
-                    },
+                    },*/
                     {
                         type: 'localeDropdown',
                         position: 'right',
                     },
                     {
-                        href: 'https://github.com/facebook/docusaurus',
+                        href: 'https://github.com/YaleJian/simple-js-tools',
                         label: 'GitHub',
                         position: 'right',
                     },
                 ],
             },
             footer: {
-                style: 'dark',
+                style: 'light',
                 links: [
                     {
-                        title: 'Docs',
+                        title: '快捷链接',
                         items: [
                             {
-                                label: 'Tutorial',
-                                to: '/docs/intro',
+                                label: 'API参考',
+                                to: '/docs/API/intro',
                             },
                         ],
                     },
                     {
-                        title: 'Community',
+                        title: '沟通',
                         items: [
                             {
-                                label: 'Stack Overflow',
-                                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+                                label: '讨论',
+                                href: 'https://github.com/YaleJian/simple-js-tools/discussions',
                             },
                             {
-                                label: 'Discord',
-                                href: 'https://discordapp.com/invite/docusaurus',
-                            },
-                            {
-                                label: 'Twitter',
-                                href: 'https://twitter.com/docusaurus',
+                                label: '反馈',
+                                href: 'https://github.com/YaleJian/simple-js-tools/issues',
                             },
                         ],
                     },
                     {
-                        title: 'More',
+                        title: '阅读',
                         items: [
                             {
-                                label: 'Blog',
+                                label: '相关文章',
                                 to: '/blog',
                             },
+                        ],
+                    },
+                    {
+                        title: '友情链接',
+                        items: [
                             {
-                                label: 'GitHub',
-                                href: 'https://github.com/facebook/docusaurus',
-                            },
+                                label: 'Docusaurus',
+                                href: 'https://docusaurus.io/zh-CN/'
+                            }
                         ],
                     },
                 ],

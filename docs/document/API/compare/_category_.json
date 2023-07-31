@@ -1,8 +1,7 @@
 {
   "label": "比较",
-  "position": 1,
+  "position": 2,
   "link": {
-    "type": "generated-index",
-    "description": "description"
+    "type": "generated-index"
   }
 }
