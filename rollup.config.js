@@ -46,5 +46,5 @@ let config = (format, filePrefix) => {
     }
 }
 configList = formats.map(f => config(f, 'publish/dist/'))
-configList = configList.concat(formats.map(f => config(f, '../miniSDK/lib/yale-js-tool/')))
+// configList = configList.concat(formats.map(f => config(f, '../miniSDK/lib/')))
 export default configList
