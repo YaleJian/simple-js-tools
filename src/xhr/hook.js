@@ -3,7 +3,7 @@ let hook = {
     requestHook: false,
     responseHook: false,
     //创建劫持钩子
-    createHooks(params) {
+    createHooks() {
         if (XMLHttpRequest.prototype.hooked) {
             console.warn("[XHR Hook]", "createHooks only need to create it once")
         } else {
@@ -34,7 +34,7 @@ let hook = {
                                 if (headers.hasOwnProperty(key)) this.setRequestHeader(key, headers[key])
                             }
                         }
-                        if (hook.debug) console.log("[Net Hook] requestHook", requestParams)
+                        if (hook.debug) console.log("[XHR Hook] requestHook", requestParams)
                     }
 
                     return raw_send.apply(this, arguments)
@@ -61,7 +61,7 @@ let hook = {
                             if (typeof responseHook === 'function') {
                                 responseHook(requestParams, this)
                             }
-                            if (hook.debug) console.log("[Net Hook] responseHook", requestParams, this)
+                            if (hook.debug) console.log("[XHR Hook] responseHook", requestParams, this)
                         }
                     }
                 }, false)
