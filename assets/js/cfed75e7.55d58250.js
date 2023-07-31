@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunksimple_js_tools_doc=self.webpackChunksimple_js_tools_doc||[]).push([[3234],{6657:s=>{s.exports=JSON.parse('{"permalink":"/simple-js-tools/blog/tags/docusaurus","page":1,"postsPerPage":10,"totalPages":1,"totalCount":4,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);
