@@ -1,2 +1,2 @@
-import tools from "./dist/simple-js-tools.es";
-export default tools
+import stools from "./dist/simple-js-tools.es";
+export default stools

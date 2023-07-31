@@ -1,8 +1,10 @@
-import xhr from "./xhr/xhr.js";
+import xhr from "./xhr/mock.js";
 import object from "./object/object.js";
+import compare from "./compare/compare.js";
 
-let tools = {
-    xhr: xhr,
-    object: object
+let sTools = {
+    xhr,
+    object,
+    compare,
 }
-export default tools
+export default sTools

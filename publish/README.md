@@ -1,5 +1,9 @@
 # Javascript 工具集
 
+```npm
+npm i simple-js-tools
+```
+
 ## 安装
 
 ### 通过 npm 安装

@@ -9,7 +9,7 @@ import terser from '@rollup/plugin-terser';
 import packageData from "./package.json";
 
 let configList = []
-let formats = ['iife', 'es', 'cjs']
+let formats = ['iife', 'es', 'cjs', 'umd']
 let config = (format, filePrefix) => {
     return {
         input: './src/index.js',
@@ -34,7 +34,7 @@ let config = (format, filePrefix) => {
             // cssnano(),
             copy({
                 targets: [
-                    { src: './README.md', dest: 'publish' },
+                    {src: './README.md', dest: 'publish'},
                 ]
             }),
             terser({

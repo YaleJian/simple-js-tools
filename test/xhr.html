@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script type="module">
+    import sTools from "../src/xhr/xhr.js"
+
+    let requestHook = requestParams => {
+        let {url, method, body, headers} = requestParams
+        return {
+            method: "post",
+            body: JSON.stringify({
+                ...{
+                    hook: "【第一次】请求参数已修改！",
+                },
+                ...JSON.parse(body)
+            }),
+            headers: {
+                ...{"requestHook": true},
+                ...headers
+            }
+        }
+    }
+
+    let requestHook2 = requestParams => {
+        let {url, method, body, headers} = requestParams
+        return {
+            body: JSON.stringify({
+                ...{
+                    hook: "【第二次】请求参数已修改！",
+                },
+                ...JSON.parse(body)
+            }),
+        }
+    }
+
+
+    let responseHook = (params, xhr) => {
+        xhr.response = xhr.responseText = JSON.stringify({...{hook: "【第一次】响应数据已修改！", ...JSON.parse(xhr.response),}})
+    }
+
+    let responseHook2 = (params, xhr) => {
+        xhr.response = xhr.responseText = JSON.stringify({...{hook: "【第二次】响应数据已修改！", ...JSON.parse(xhr.response),}})
+    }
+    sTools.hook.debug = true
+    sTools.hook.responseHook = responseHook
+    sTools.hook.requestHook = requestHook
+    sTools.hook.createHooks()
+    sTools.hook.createHooks()
+
+    function doXHR() {
+        let xhr = new XMLHttpRequest();
+        xhr.open("post", "https://mock.apifox.cn/m1/1967749-0-default/request/post", true); // 异步请求
+        xhr.setRequestHeader("Content-type", "application/json")
+        xhr.send(JSON.stringify({id: 1}));
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) { // 监听请求完成
+                if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 304) {
+                    console.log(xhr.response)
+                }
+            }
+        }
+    }
+
+    doXHR()
+
+    setTimeout(() => {
+        sTools.hook.responseHook = responseHook2
+        sTools.hook.requestHook = requestHook2
+        doXHR()
+    }, 2000)
+
+</script>
+</html>

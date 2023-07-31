@@ -1,15 +1,6 @@
----
-sidebar_position: 3
----
-# XMLHttpRequest
-对浏览器XMLHttpRequest对象的操作。
+import object from "./../object/object.js";
+import compare from "../compare/compare.js";
 
-## XMLHttpRequest请求和响应的查看和修改
-
-
-## 模拟XMLHttpRequest对象
-
-``` javascript
 // 备份原生 XMLHttpRequest
 window._XMLHttpRequest = window.XMLHttpRequest
 window._ActiveXObject = window.ActiveXObject
@@ -94,10 +85,10 @@ let HTTP_STATUS_CODES = {
 }
 
 /*
-    MiniXMLHttpRequest
+    MockXHR
 */
 
-function MiniXMLHttpRequest() {
+function MockXHR() {
     // 初始化 config 对象，用于存储自定义属性
     this.config = {
         events: {},
@@ -109,17 +100,17 @@ function MiniXMLHttpRequest() {
     this.debug = false
 }
 
-object.deepCopy(MiniXMLHttpRequest, XHR_STATES)
-object.deepCopy(MiniXMLHttpRequest.prototype, XHR_STATES)
+object.deepCopy(MockXHR, XHR_STATES)
+object.deepCopy(MockXHR.prototype, XHR_STATES)
 
-// 标记当前对象为 MiniXMLHttpRequest
-MiniXMLHttpRequest.prototype.mini = true
+// 标记当前对象为 MockXHR
+MockXHR.prototype.mock = true
 
 // 禁止代理
-MiniXMLHttpRequest.prototype.noProxy = false
+MockXHR.prototype.noProxy = false
 
 // 初始化 Request 相关的属性和方法
-object.deepCopy(MiniXMLHttpRequest.prototype, {
+object.deepCopy(MockXHR.prototype, {
     // https://xhr.spec.whatwg.org/#the-open()-method
     // Sets the request method, request URL, and synchronous flag.
     open: function (method, url, async, username, password) {
@@ -139,14 +130,14 @@ object.deepCopy(MiniXMLHttpRequest.prototype, {
         })
 
         function handle(event) {
-            // 同步属性 NativeXMLHttpRequest => MiniXMLHttpRequest
+            // 同步属性 NativeXMLHttpRequest => MockXHR
             for (let i = 0; i < XHR_RESPONSE_PROPERTIES.length; i++) {
                 try {
                     that[XHR_RESPONSE_PROPERTIES[i]] = xhr[XHR_RESPONSE_PROPERTIES[i]]
                 } catch (e) {
                 }
             }
-            // 触发 MiniXMLHttpRequest 上的同名事件
+            // 触发 MockXHR 上的同名事件
             that.dispatchEvent(new Event(event.type /*, false, false, that*/))
         }
 
@@ -167,7 +158,7 @@ object.deepCopy(MiniXMLHttpRequest.prototype, {
                 xhr.open(method, url, async)
             }
 
-            // 同步属性 MiniXMLHttpRequest => NativeXMLHttpRequest
+            // 同步属性 MockXHR => NativeXMLHttpRequest
             for (let j = 0; j < XHR_REQUEST_PROPERTIES.length; j++) {
                 try {
                     xhr[XHR_REQUEST_PROPERTIES[j]] = that[XHR_REQUEST_PROPERTIES[j]]
@@ -178,7 +169,7 @@ object.deepCopy(MiniXMLHttpRequest.prototype, {
             return
         }
         // 开始拦截 XHR 请求
-        this.readyState = MiniXMLHttpRequest.OPENED
+        this.readyState = MockXHR.OPENED
         this.dispatchEvent(new Event('readystatechange' /*, false, false, this*/))
     },
     // https://xhr.spec.whatwg.org/#the-setrequestheader()-method
@@ -214,21 +205,21 @@ object.deepCopy(MiniXMLHttpRequest.prototype, {
         // 拦截 XHR
 
         // X-Requested-With header
-        this.setRequestHeader('X-Requested-With', 'MiniXMLHttpRequest')
+        this.setRequestHeader('X-Requested-With', 'MockXHR')
 
         // loadstart The fetch initiates.
         this.dispatchEvent(new Event('loadstart' /*, false, false, this*/))
 
-        that.readyState = MiniXMLHttpRequest.HEADERS_RECEIVED
+        that.readyState = MockXHR.HEADERS_RECEIVED
         that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/))
-        that.readyState = MiniXMLHttpRequest.LOADING
+        that.readyState = MockXHR.LOADING
         that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/))
 
 
-        if (MiniXMLHttpRequest.proxy) {
-            if (MiniXMLHttpRequest.debug) console.log("[XHR] 请求xhr:", that.config)
-            let doProxy = MiniXMLHttpRequest.proxy(that)
-            if(compare.isPromise(doProxy)){
+        if (MockXHR.proxy) {
+            if (MockXHR.debug) console.log("[XHR] 请求xhr:", that.config)
+            let doProxy = MockXHR.proxy(that)
+            if (compare.isPromise(doProxy)) {
                 doProxy.then(data => {
                     done(data)
                 }).catch(e => {
@@ -240,7 +231,7 @@ object.deepCopy(MiniXMLHttpRequest.prototype, {
         }
 
         function done(data, status) {
-            if (MiniXMLHttpRequest.debug) console.log("[XHR] 响应data:", data)
+            if (MockXHR.debug) console.log("[XHR] 响应data:", data)
 
             if (data.responseHeaders) that.responseHeaders = data.responseHeaders
             if (data.response) that.response = data.response || ''
@@ -253,7 +244,7 @@ object.deepCopy(MiniXMLHttpRequest.prototype, {
             if (data.timeout) that.timeout = data.timeout
             if (data.withCredentials) that.withCredentials = data.withCredentials
 
-            that.readyState = MiniXMLHttpRequest.DONE
+            that.readyState = MockXHR.DONE
             that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/))
             that.dispatchEvent(new Event('load' /*, false, false, that*/));
             that.dispatchEvent(new Event('loadend' /*, false, false, that*/));
@@ -269,15 +260,15 @@ object.deepCopy(MiniXMLHttpRequest.prototype, {
         }
 
         // 拦截 XHR
-        this.readyState = MiniXMLHttpRequest.UNSENT
+        this.readyState = MockXHR.UNSENT
         this.dispatchEvent(new Event('abort', false, false, this))
         this.dispatchEvent(new Event('error', false, false, this))
     }
 })
 
 // 初始化 Response 相关的属性和方法
-object.deepCopy(MiniXMLHttpRequest.prototype, {
-    status: MiniXMLHttpRequest.UNSENT,
+object.deepCopy(MockXHR.prototype, {
+    status: MockXHR.UNSENT,
     statusText: '',
     // https://xhr.spec.whatwg.org/#the-getresponseheader()-method
     getResponseHeader: function (name) {
@@ -317,7 +308,7 @@ object.deepCopy(MiniXMLHttpRequest.prototype, {
 })
 
 // EventTarget
-object.deepCopy(MiniXMLHttpRequest.prototype, {
+object.deepCopy(MockXHR.prototype, {
     addEventListener: function addEventListener(type, handle) {
         let events = this.config.events
         if (!events[type]) events[type] = []
@@ -370,5 +361,4 @@ function createNativeXMLHttpRequest() {
     }
 }
 
-export default MiniXMLHttpRequest
-```
+export default MockXHR
