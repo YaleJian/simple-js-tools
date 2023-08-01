@@ -4,6 +4,15 @@ sidebar_position: 2
 # 对象
 对对象的操作。
 
+# 获取对象类型
+
+## 判断是否为JS方法
+```javascript
+getType(obj) {
+    return (obj === null || obj === undefined) ? String(obj) : Object.prototype.toString.call(obj).match(/\[object (\w+)\]/)[1].toLowerCase()
+}
+```
+
 ## 深拷贝
 ```
 deepCopy(...args) {

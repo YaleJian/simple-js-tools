@@ -1,6 +1,10 @@
 import Compare from "../compare/compare.js";
 
 const object = {
+    //获取对象类型
+    getType(obj) {
+        return (obj === null || obj === undefined) ? String(obj) : Object.prototype.toString.call(obj).match(/\[object (\w+)\]/)[1].toLowerCase()
+    },
     //深拷贝合并对象的所有层级属性，以最后传入的同名属性值为覆盖前面的
     deepCopy(...args) {
         //初始化变量

@@ -25,3 +25,17 @@ isPromise(arg){
     return Object.prototype.toString.call(arg) === '[object Promise]'
 }
 ```
+
+## 判断是否为数字
+```javascript
+isNumber: function(arg) {
+    return !isNaN(parseFloat(arg)) && isFinite(arg)
+}
+```
+
+## 判断是否为JS方法
+```javascript
+isFunction: function (arg) {
+    return Object.prototype.toString.call(arg) === '[object Function]'
+}
+```
