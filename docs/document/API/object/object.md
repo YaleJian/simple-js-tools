@@ -12,10 +12,15 @@ getType(obj) {
     return (obj === null || obj === undefined) ? String(obj) : Object.prototype.toString.call(obj).match(/\[object (\w+)\]/)[1].toLowerCase()
 }
 ```
-
-## 深拷贝
+## 对象拷贝
+```javascript
+clone(obj){
+    return JSON.parse(JSON.stringify(obj))
+}
 ```
-deepCopy(...args) {
+## 对象合并
+```
+merge(...args) {
     //初始化变量
     let target = args[0] || {},
         i = 1,

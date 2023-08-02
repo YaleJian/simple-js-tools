@@ -3,10 +3,14 @@ import Compare from "../compare/compare.js";
 const object = {
     //获取对象类型
     getType(obj) {
-        return (obj === null || obj === undefined) ? String(obj) : Object.prototype.toString.call(obj).match(/\[object (\w+)\]/)[1].toLowerCase()
+        return (obj === null || obj === undefined) ? String(obj) : Object.prototype.toString.call(obj).match(/\[object (\w+)]/)[1].toLowerCase()
     },
-    //深拷贝合并对象的所有层级属性，以最后传入的同名属性值为覆盖前面的
-    deepCopy(...args) {
+    //克隆对象
+    clone(obj){
+        return JSON.parse(JSON.stringify(obj))
+    },
+    //深度合并对象的所有层级属性，以最后传入的同名属性值为覆盖前面的
+    merge(...args) {
         //初始化变量
         let target = args[0] || {},
             i = 1,
