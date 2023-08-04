@@ -57,7 +57,7 @@ merge(...args) {
                 }
                 copyIsArray = false //避免影响下次循环
     
-                target[name] = object.deepCopy(clone, copy)
+                target[name] = object.merge(clone, copy)
             } else if (copy !== undefined) {
                 target[name] = copy
             }

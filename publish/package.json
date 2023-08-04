@@ -1,6 +1,6 @@
 {
   "name": "simple-js-tools",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-beta.7",
   "description": "Yale的Javascript工具集",
   "main": "index.js",
   "dependencies": {

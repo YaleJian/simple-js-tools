@@ -100,8 +100,8 @@ function MockXHR() {
     this.debug = false
 }
 
-object.deepCopy(MockXHR, XHR_STATES)
-object.deepCopy(MockXHR.prototype, XHR_STATES)
+object.merge(MockXHR, XHR_STATES)
+object.merge(MockXHR.prototype, XHR_STATES)
 
 // 标记当前对象为 MockXHR
 MockXHR.prototype.mock = true
@@ -110,13 +110,13 @@ MockXHR.prototype.mock = true
 MockXHR.prototype.noProxy = false
 
 // 初始化 Request 相关的属性和方法
-object.deepCopy(MockXHR.prototype, {
+object.merge(MockXHR.prototype, {
     // https://xhr.spec.whatwg.org/#the-open()-method
     // Sets the request method, request URL, and synchronous flag.
     open: function (method, url, async, username, password) {
         let that = this
 
-        object.deepCopy(this.config, {
+        object.merge(this.config, {
             method: method,
             url: url,
             async: typeof async === 'boolean' ? async : true,
@@ -267,7 +267,7 @@ object.deepCopy(MockXHR.prototype, {
 })
 
 // 初始化 Response 相关的属性和方法
-object.deepCopy(MockXHR.prototype, {
+object.merge(MockXHR.prototype, {
     status: MockXHR.UNSENT,
     statusText: '',
     // https://xhr.spec.whatwg.org/#the-getresponseheader()-method
@@ -308,7 +308,7 @@ object.deepCopy(MockXHR.prototype, {
 })
 
 // EventTarget
-object.deepCopy(MockXHR.prototype, {
+object.merge(MockXHR.prototype, {
     addEventListener: function addEventListener(type, handle) {
         let events = this.config.events
         if (!events[type]) events[type] = []

@@ -56,10 +56,10 @@
             a: 2
         }
     }
-    console.log(object.deepCopy(str1, str2))
-    Object.prototype.deepCopy = object.deepCopy
-    console.log(str1.deepCopy(str2))
-    console.log(str3.deepCopy(str4))
+    console.log(object.merge(str1, str2))
+    Object.prototype.merge = object.merge
+    console.log(str1.merge(str2))
+    console.log(str3.merge(str4))
 
 
     xhr.proxy = xhr => new Promise((resolve, reject) => {

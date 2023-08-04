@@ -109,8 +109,8 @@ function MiniXMLHttpRequest() {
     this.debug = false
 }
 
-object.deepCopy(MiniXMLHttpRequest, XHR_STATES)
-object.deepCopy(MiniXMLHttpRequest.prototype, XHR_STATES)
+object.merge(MiniXMLHttpRequest, XHR_STATES)
+object.merge(MiniXMLHttpRequest.prototype, XHR_STATES)
 
 // 标记当前对象为 MiniXMLHttpRequest
 MiniXMLHttpRequest.prototype.mini = true
@@ -119,13 +119,13 @@ MiniXMLHttpRequest.prototype.mini = true
 MiniXMLHttpRequest.prototype.noProxy = false
 
 // 初始化 Request 相关的属性和方法
-object.deepCopy(MiniXMLHttpRequest.prototype, {
+object.merge(MiniXMLHttpRequest.prototype, {
     // https://xhr.spec.whatwg.org/#the-open()-method
     // Sets the request method, request URL, and synchronous flag.
     open: function (method, url, async, username, password) {
         let that = this
 
-        object.deepCopy(this.config, {
+        object.merge(this.config, {
             method: method,
             url: url,
             async: typeof async === 'boolean' ? async : true,
@@ -276,7 +276,7 @@ object.deepCopy(MiniXMLHttpRequest.prototype, {
 })
 
 // 初始化 Response 相关的属性和方法
-object.deepCopy(MiniXMLHttpRequest.prototype, {
+object.merge(MiniXMLHttpRequest.prototype, {
     status: MiniXMLHttpRequest.UNSENT,
     statusText: '',
     // https://xhr.spec.whatwg.org/#the-getresponseheader()-method
@@ -317,7 +317,7 @@ object.deepCopy(MiniXMLHttpRequest.prototype, {
 })
 
 // EventTarget
-object.deepCopy(MiniXMLHttpRequest.prototype, {
+object.merge(MiniXMLHttpRequest.prototype, {
     addEventListener: function addEventListener(type, handle) {
         let events = this.config.events
         if (!events[type]) events[type] = []
