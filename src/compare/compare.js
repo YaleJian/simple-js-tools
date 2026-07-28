@@ -1,22 +1,14 @@
+const toString = Object.prototype.toString
+
 export default {
-    //是否为数组
-    isArray(arg) {
-        return Array.isArray(arg)
+    // 仅匹配普通对象，不把数组、日期等对象误判为普通对象。
+    isObject(value) {
+        return toString.call(value) === '[object Object]'
     },
-    //是否为JS对象
-    isObject(arg){
-        return Object.prototype.toString.call(arg) === '[object Object]'
-    },
-    //是否为Promise对象
-    isPromise(arg){
-        return Object.prototype.toString.call(arg) === '[object Promise]'
-    },
-    //是否为数字
-    isNumber: function(arg) {
-        return !isNaN(parseFloat(arg)) && isFinite(arg)
-    },
-    //是否为JS方法
-    isFunction: function (arg) {
-        return Object.prototype.toString.call(arg) === '[object Function]'
+
+    // 保留原有宽松语义：数字以及非空数字字符串都返回 true。
+    isNumber(value) {
+        return value !== '' && value !== null && typeof value !== 'boolean'
+            && Number.isFinite(Number(value))
     }
 }

@@ -1,12 +1,10 @@
 import xhr from "./xhr/xhr.js";
 import object from "./object/object.js";
 import compare from "./compare/compare.js";
-import calculate from "./calculate/calculate";
 
-let sTools = {
+const sTools = {
     xhr,
     object,
-    compare,
-    calculate
+    compare
 }
 export default sTools

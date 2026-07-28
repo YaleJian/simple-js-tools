@@ -1,30 +1,22 @@
-# Javascript 工具集
+# simple-js-tools
 
-```npm
-npm i simple-js-tools
-```
+一个保持小而清晰的 JavaScript 工具库。
 
-## 安装
-
-### 通过 npm 安装
-在现有项目中使用 simple-js-tools 时，可以通过 npm 进行安装
 ```bash
-npm i simple-js-tools
-```
-当然，你也可以通过 yarn 或 pnpm 进行安装：
-```bash
-# 通过 yarn 安装
-yarn add simple-js-tools
-
-# 通过 pnpm 安装
-pnpm add simple-js-tools
+npm install simple-js-tools
 ```
 
+```js
+import sTools from 'simple-js-tools'
 
-### 通过 CDN 安装
-使用 simple-js-tools 最简单的方法是直接在 HTML 文件中引入 CDN 链接，之后你可以通过全局变量 sTools 访问到所有方法。
-
-```javascript
-<script src="https://unpkg.com/browse/simple-js-tools@1.0.0-beta.3/dist/simple-js-tools.js">
-</script>
+sTools.compare.isNumber('12.5')
 ```
+
+浏览器全局版本：
+
+```html
+<script src="https://unpkg.com/simple-js-tools/dist/simple-js-tools.js"></script>
+```
+
+完整文档和贡献规范请访问
+[GitHub 仓库](https://github.com/YaleJian/simple-js-tools)。

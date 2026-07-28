@@ -2,7 +2,20 @@
   "name": "simple-js-tools",
   "version": "1.0.0-beta.7",
   "description": "Yale的Javascript工具集",
-  "main": "index.js",
+  "type": "module",
+  "main": "./dist/simple-js-tools.cjs",
+  "module": "./dist/simple-js-tools.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/simple-js-tools.es.js",
+      "require": "./dist/simple-js-tools.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {
   },
   "scripts": {

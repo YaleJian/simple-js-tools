@@ -1,9 +1,10 @@
 import object from "./../object/object.js";
-import compare from "../compare/compare.js";
 
-// 备份原生 XMLHttpRequest
-window._XMLHttpRequest = window.XMLHttpRequest
-window._ActiveXObject = window.ActiveXObject
+const runtime = typeof window === 'undefined' ? globalThis : window
+
+// 在模块内部保存原生实现，避免为了 noProxy 模式污染 window。
+const NativeXMLHttpRequest = runtime.XMLHttpRequest
+const NativeActiveXObject = runtime.ActiveXObject
 
 /*
     PhantomJS
@@ -12,17 +13,18 @@ window._ActiveXObject = window.ActiveXObject
     https://github.com/bluerail/twitter-bootstrap-rails-confirm/issues/18
     https://github.com/ariya/phantomjs/issues/11289
 */
-try {
-    new window.Event('config')
-} catch (exception) {
-    window.Event = function (type, bubbles, cancelable, detail) {
-        let event = document.createEvent('CustomEvent') // MUST be 'CustomEvent'
-        event.initCustomEvent(type, bubbles, cancelable, detail)
+function createEvent(type) {
+    try {
+        return new runtime.Event(type)
+    } catch {
+        // 兼容不支持 Event 构造器的旧浏览器，但不覆盖全局 Event。
+        const event = runtime.document.createEvent('CustomEvent')
+        event.initCustomEvent(type, false, false, undefined)
         return event
     }
 }
 
-let XHR_STATES = {
+const XHR_STATES = {
     // The object has been constructed.
     UNSENT: 0,
     // The open() method has been successfully invoked.
@@ -35,12 +37,12 @@ let XHR_STATES = {
     DONE: 4
 }
 
-let XHR_EVENTS = 'readystatechange loadstart progress abort error load timeout loadend'.split(' ')
-let XHR_REQUEST_PROPERTIES = 'timeout withCredentials'.split(' ')
-let XHR_RESPONSE_PROPERTIES = 'readyState responseURL status statusText responseType response responseText responseXML'.split(' ')
+const XHR_EVENTS = 'readystatechange loadstart progress abort error load timeout loadend'.split(' ')
+const XHR_REQUEST_PROPERTIES = 'timeout withCredentials'.split(' ')
+const XHR_RESPONSE_PROPERTIES = 'readyState responseURL status statusText responseType response responseText responseXML'.split(' ')
 
 // https://github.com/trek/FakeXMLHttpRequest/blob/master/fake_xml_http_request.js#L32
-let HTTP_STATUS_CODES = {
+const HTTP_STATUS_CODES = {
     100: "Continue",
     101: "Switching Protocols",
     200: "OK",
@@ -89,15 +91,13 @@ let HTTP_STATUS_CODES = {
 */
 
 function MockXHR() {
-    // 初始化 config 对象，用于存储自定义属性
+    // 可变数据必须按实例创建，防止多个请求相互污染。
     this.config = {
         events: {},
         headers: {},
     }
-
-    //返回hook
-    this.proxy = false
-    this.debug = false
+    this.responseHeaders = {}
+    this.upload = {}
 }
 
 object.merge(MockXHR, XHR_STATES)
@@ -138,7 +138,7 @@ object.merge(MockXHR.prototype, {
                 }
             }
             // 触发 MockXHR 上的同名事件
-            that.dispatchEvent(new Event(event.type /*, false, false, that*/))
+            that.dispatchEvent(createEvent(event.type))
         }
 
         // 禁止代理时，则采用原生 XHR 发送请求。
@@ -170,7 +170,7 @@ object.merge(MockXHR.prototype, {
         }
         // 开始拦截 XHR 请求
         this.readyState = MockXHR.OPENED
-        this.dispatchEvent(new Event('readystatechange' /*, false, false, this*/))
+        this.dispatchEvent(createEvent('readystatechange'))
     },
     // https://xhr.spec.whatwg.org/#the-setrequestheader()-method
     // Combines a header in author request headers.
@@ -208,46 +208,51 @@ object.merge(MockXHR.prototype, {
         this.setRequestHeader('X-Requested-With', 'MockXHR')
 
         // loadstart The fetch initiates.
-        this.dispatchEvent(new Event('loadstart' /*, false, false, this*/))
+        this.dispatchEvent(createEvent('loadstart'))
 
         that.readyState = MockXHR.HEADERS_RECEIVED
-        that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/))
+        that.dispatchEvent(createEvent('readystatechange'))
         that.readyState = MockXHR.LOADING
-        that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/))
+        that.dispatchEvent(createEvent('readystatechange'))
 
 
         if (MockXHR.proxy) {
             if (MockXHR.debug) console.log("[XHR] 请求xhr:", that.config)
-            let doProxy = MockXHR.proxy(that)
-            if (compare.isPromise(doProxy)) {
-                doProxy.then(data => {
-                    done(data)
-                }).catch(e => {
-                    done(e, 502)
+            const proxyResult = MockXHR.proxy(that)
+            if (proxyResult && typeof proxyResult.then === 'function') {
+                Promise.resolve(proxyResult).then(done).catch(error => {
+                    done({response: String(error)}, 502)
                 })
+            } else {
+                done({response: 'proxy 必须返回 Promise'}, 500)
             }
         } else {
-            console.warn("[tools-xhr] proxy param is not a Promise")
+            done({response: '未配置 XHR proxy'}, 500)
         }
 
         function done(data, status) {
             if (MockXHR.debug) console.log("[XHR] 响应data:", data)
 
-            if (data.responseHeaders) that.responseHeaders = data.responseHeaders
-            if (data.response) that.response = data.response || ''
+            data ||= {}
+            if (data.responseHeaders) {
+                that.responseHeaders = Object.fromEntries(
+                    Object.entries(data.responseHeaders).map(([name, value]) => [name.toLowerCase(), value])
+                )
+            }
+            if ('response' in data) that.response = data.response
             if (typeof data.response === "string") that.responseText = data.response
             if (data.responseType) that.responseType = data.responseType
             if (data.responseURL) that.responseURL = data.responseURL
             if (data.responseXML) that.responseXML = data.responseXML
-            that.status = data.status || 200
-            that.statusText = data.statusText || HTTP_STATUS_CODES[that.status]
-            if (data.timeout) that.timeout = data.timeout
-            if (data.withCredentials) that.withCredentials = data.withCredentials
+            that.status = status || data.status || 200
+            that.statusText = data.statusText || HTTP_STATUS_CODES[that.status] || ''
+            if ('timeout' in data) that.timeout = data.timeout
+            if ('withCredentials' in data) that.withCredentials = data.withCredentials
 
             that.readyState = MockXHR.DONE
-            that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/))
-            that.dispatchEvent(new Event('load' /*, false, false, that*/));
-            that.dispatchEvent(new Event('loadend' /*, false, false, that*/));
+            that.dispatchEvent(createEvent('readystatechange'))
+            that.dispatchEvent(createEvent('load'))
+            that.dispatchEvent(createEvent('loadend'))
         }
     },
     // https://xhr.spec.whatwg.org/#the-abort()-method
@@ -261,8 +266,8 @@ object.merge(MockXHR.prototype, {
 
         // 拦截 XHR
         this.readyState = MockXHR.UNSENT
-        this.dispatchEvent(new Event('abort', false, false, this))
-        this.dispatchEvent(new Event('error', false, false, this))
+        this.dispatchEvent(createEvent('abort'))
+        this.dispatchEvent(createEvent('error'))
     }
 })
 
@@ -278,7 +283,7 @@ object.merge(MockXHR.prototype, {
         }
 
         // 拦截 XHR
-        return this.responseHeaders[name.toLowerCase()]
+        return this.responseHeaders[name.toLowerCase()] ?? null
     },
     // https://xhr.spec.whatwg.org/#the-getallresponseheaders()-method
     // http://www.utf8-chartable.de/
@@ -289,13 +294,9 @@ object.merge(MockXHR.prototype, {
         }
 
         // 拦截 XHR
-        let responseHeaders = this.responseHeaders
-        let headers = ''
-        for (let h in responseHeaders) {
-            if (!responseHeaders.hasOwnProperty(h)) continue
-            headers += h + ': ' + responseHeaders[h] + '\r\n'
-        }
-        return headers
+        return Object.entries(this.responseHeaders)
+            .map(([name, value]) => `${name}: ${value}\r\n`)
+            .join('')
     },
     overrideMimeType: function ( /*mime*/) {
     },
@@ -338,24 +339,24 @@ function createNativeXMLHttpRequest() {
     let isLocal = function () {
         let rlocalProtocol = /^(?:about|app|app-storage|.+-extension|file|res|widget):$/
         let rurl = /^([\w.+-]+:)(?:\/\/([^\/?#:]*)(?::(\d+)|)|)/
-        let ajaxLocation = location.href
+        let ajaxLocation = runtime.location.href
         let ajaxLocParts = rurl.exec(ajaxLocation.toLowerCase()) || []
         return rlocalProtocol.test(ajaxLocParts[1])
     }()
 
-    return window.ActiveXObject ?
+    return NativeActiveXObject ?
         (!isLocal && createStandardXHR() || createActiveXHR()) : createStandardXHR()
 
     function createStandardXHR() {
         try {
-            return new window._XMLHttpRequest();
+            return new NativeXMLHttpRequest();
         } catch (e) {
         }
     }
 
     function createActiveXHR() {
         try {
-            return new window._ActiveXObject("Microsoft.XMLHTTP");
+            return new NativeActiveXObject("Microsoft.XMLHTTP");
         } catch (e) {
         }
     }

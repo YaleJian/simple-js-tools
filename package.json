@@ -1,11 +1,12 @@
 {
   "name": "simple-js-tools",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-beta.7",
   "description": "JS Tools",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "build": "rollup -c --bundleConfigAsCjs ./rollup.config.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsdown",
+    "test": "node --test"
   },
   "repository": {
     "type": "git",
@@ -21,20 +22,6 @@
   },
   "homepage": "https://github.com/YaleJian/simple-js-tools#readme",
   "devDependencies": {
-    "@babel/core": "^7.25.2",
-    "@babel/preset-env": "^7.25.3",
-    "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-commonjs": "^26.0.1",
-    "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-terser": "^0.4.4",
-    "cross-env": "^7.0.3",
-    "events": "^3.3.0",
-    "rollup": "^4.20.0",
-    "rollup-plugin-copy": "^3.5.0",
-    "rollup-plugin-polyfill-node": "^0.13.0",
-    "ws": "^8.18.0"
-  },
-  "dependencies": {
+    "tsdown": "^0.22.14"
   }
 }

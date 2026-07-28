@@ -1,55 +1,38 @@
-import Compare from "../compare/compare.js";
+import compare from "../compare/compare.js"
 
 const object = {
-    //获取对象类型
-    getType(obj) {
-        return (obj === null || obj === undefined) ? String(obj) : Object.prototype.toString.call(obj).match(/\[object (\w+)]/)[1].toLowerCase()
+    // 返回统一的小写类型名称，例如 array、date、null。
+    getType(value) {
+        if (value === null || value === undefined) return String(value)
+        return Object.prototype.toString.call(value).slice(8, -1).toLowerCase()
     },
-    //克隆对象
-    clone(obj){
-        return JSON.parse(JSON.stringify(obj))
-    },
-    //深度合并对象的所有层级属性，以最后传入的同名属性值为覆盖前面的
-    merge(...args) {
-        //初始化变量
-        let target = args[0] || {},
-            i = 1,
-            length = args.length,
-            options, name, src, copy, copyIsArray, clone
 
-        //传入一个变量时，自身合并参数对象
-        if (length === 1) {
-            target = this
-            i = 0
-        }
+    // 深度合并普通对象和数组，后传入的同名属性覆盖先前属性。
+    merge(target, ...sources) {
+        target ||= {}
 
-        //循环拷贝
-        for (; i < length; i++) {
-            options = args[i]
-            if (!options) continue //只处理不是undefined和null的值
+        for (const source of sources) {
+            if (source == null) continue
 
-            for (name in options) {
-                copy = options[name] //要拷贝的对象属性
+            for (const name of Object.keys(source)) {
+                // 阻断修改对象原型或构造器的常见污染入口。
+                if (name === '__proto__' || name === 'prototype' || name === 'constructor') continue
 
-                if (name === "_proto_" || target[name] === copy) continue //只处理值不同的,不改变_proto_
+                const value = source[name]
+                if (value === undefined || target[name] === value) continue
 
-                //属性值为数组和对象需要进一步拷贝
-                if (copy && (Compare.isObject(copy) || (copyIsArray = Compare.isArray(copy)))) {
-                    src = target[name] //原来对象属性
-                    if (copyIsArray && !Compare.isArray(src)) {
-                        //copy是数组，但是原来对象属性不是数组
-                        clone = []
-                    } else if (!copyIsArray && !Compare.isObject(src)) {
-                        //copy不是数组，原来对象属性不是对象
-                        clone = {}
-                    } else {
-                        clone = src
-                    }
-                    copyIsArray = false //避免影响下次循环
-
-                    target[name] = object.merge(clone, copy)
-                } else if (copy !== undefined) {
-                    target[name] = copy
+                if (Array.isArray(value)) {
+                    target[name] = object.merge(
+                        Array.isArray(target[name]) ? target[name] : [],
+                        value
+                    )
+                } else if (compare.isObject(value)) {
+                    target[name] = object.merge(
+                        compare.isObject(target[name]) ? target[name] : {},
+                        value
+                    )
+                } else {
+                    target[name] = value
                 }
             }
         }
@@ -57,4 +40,5 @@ const object = {
         return target
     }
 }
+
 export default object

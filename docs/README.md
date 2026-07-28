@@ -1,41 +1,25 @@
-# Website
+# 使用文档
 
-This website is built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
+## 安装与导入
 
-### Installation
-
-```
-$ yarn
+```bash
+npm install simple-js-tools
 ```
 
-### Local Development
+```js
+import sTools from 'simple-js-tools'
 
-```
-$ yarn start
-```
-
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
-
-### Build
-
-```
-$ yarn build
+const {compare, object, xhr} = sTools
 ```
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
+按模块阅读完整 API：
 
-### Deployment
+- [`compare`](./compare.md)：判断值的类型。
+- [`object`](./object.md)：获取类型、克隆和深度合并普通数据。
+- [`xhr`](./xhr.md)：模拟或劫持浏览器 `XMLHttpRequest`。
 
-Using SSH:
+## 使用边界
 
-```
-$ USE_SSH=true yarn deploy
-```
-
-Not using SSH:
-
-```
-$ GIT_USER=<Your GitHub username> yarn deploy
-```
-
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+- `compare` 和 `object` 可用于浏览器及支持 ESM 的 Node.js。
+- `xhr` 面向浏览器；在 Node.js 中可以导入，但实际发起或劫持请求需要存在 `XMLHttpRequest`。
+- 本库不追求方法数量。平台原生 API 已足够清晰时，不再包装同义方法。

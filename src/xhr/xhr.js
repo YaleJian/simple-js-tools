@@ -1,8 +1,9 @@
 import mock from "./mock.js";
 import hook from "./hook.js";
 
-let xhr = {
+const xhr = {
     mock,
     hook
 }
+
 export default xhr
