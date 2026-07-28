@@ -17,7 +17,7 @@
 
 - `compare`：无副作用的值类型与特征判断。
 - `object`：通用对象数据处理。
-- `xhr`：浏览器 XMLHttpRequest 的模拟与劫持。
+- `request`：浏览器 XMLHttpRequest 与 fetch 的无感传输劫持。
 - 新领域必须具备多个相互关联且必要的方法后再建立新模块，不创建空模块占位。
 
 ## 实现要求
@@ -37,3 +37,11 @@
 - 运行 `npm test`。
 - 运行 `npm run build`，确认 ESM、CJS、IIFE、UMD 产物成功生成。
 - 检查入口和文档中没有残留无效模块或过期方法。
+
+## npm 发布
+
+- 只在根 `package.json` 修改版本和包元数据。
+- `publish/` 是构建生成目录，不手工编辑、不提交 Git。
+- 使用 `npm run release:check` 执行测试、构建、版本一致性和 ESM/CJS 入口校验。
+- 使用 `npm run pack:check` 检查最终 tarball 文件清单。
+- 预发布版本通过 `npm run publish:beta` 发布到 npm 的 `beta` 标签，避免覆盖 `latest`。

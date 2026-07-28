@@ -1,19 +1,26 @@
 {
   "name": "simple-js-tools",
-  "version": "1.0.0-beta.8",
-  "description": "JS Tools",
-  "main": "index.js",
+  "version": "1.0.0-beta.9",
+  "description": "一个保持小而清晰的 JavaScript 工具库",
+  "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsdown",
-    "test": "node --test"
+    "build": "tsdown && node scripts/prepare-publish.js",
+    "test": "node --test",
+    "release:check": "npm test && npm run build && node scripts/verify-publish.js",
+    "pack:check": "npm run release:check && npm pack ./publish --dry-run --cache ./node_modules/.cache/npm",
+    "publish:beta": "npm run release:check && npm publish ./publish --tag beta"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/YaleJian/simple-js-tools.git"
   },
   "keywords": [
-    "JavaScript"
+    "javascript",
+    "tools",
+    "xhr",
+    "fetch",
+    "interceptor"
   ],
   "author": "Yale Jian",
   "license": "Apache-2.0",

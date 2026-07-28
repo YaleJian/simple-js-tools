@@ -1,0 +1,4 @@
+interface:
+  display_name: "Simple JS Tools Maintainer"
+  short_description: "保持工具库 API 小而清晰，并同步测试、文档与构建"
+  default_prompt: "使用 $simple-js-tools-maintainer 评审并实现这个工具库变更。"

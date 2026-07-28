@@ -1,9 +1,9 @@
-import xhr from "./xhr/xhr.js";
+import request from './request/index.js'
 import object from "./object/object.js";
 import compare from "./compare/compare.js";
 
 const sTools = {
-    xhr,
+    request,
     object,
     compare
 }
