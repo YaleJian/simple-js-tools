@@ -1,3 +1,5 @@
+import {applyBeforeRequest, normalizeHeaders} from './request-patch.js'
+
 const runtime = typeof window === 'undefined' ? globalThis : window
 const NativeXMLHttpRequest = runtime.XMLHttpRequest
 
@@ -49,24 +51,21 @@ function createError(name, message) {
     return error
 }
 
-function normalizeHeaders(headers = {}) {
-    return Object.fromEntries(
-        Object.entries(headers).map(([name, value]) => [name.toLowerCase(), String(value)])
-    )
-}
-
 class XHRInterceptor {
     static transport = null
+    static beforeRequest = null
     static debug = false
     static nativeXMLHttpRequest = NativeXMLHttpRequest
 
-    static install(transport, target = runtime) {
+    static install(transport, {target = runtime, beforeRequest} = {}) {
         if (typeof transport !== 'function') throw new TypeError('request.xhr.install 需要 transport 函数')
         if (activeInstallation) throw new Error('XHR 劫持器已安装到运行环境')
 
         const nativeXMLHttpRequest = target.XMLHttpRequest
         const previousTransport = XHRInterceptor.transport
+        const previousBeforeRequest = XHRInterceptor.beforeRequest
         XHRInterceptor.transport = transport
+        XHRInterceptor.beforeRequest = beforeRequest
         XHRInterceptor.nativeXMLHttpRequest = nativeXMLHttpRequest
         target.XMLHttpRequest = XHRInterceptor
 
@@ -76,6 +75,7 @@ class XHRInterceptor {
                 if (!active) return
                 if (target.XMLHttpRequest === XHRInterceptor) target.XMLHttpRequest = nativeXMLHttpRequest
                 XHRInterceptor.transport = previousTransport
+                XHRInterceptor.beforeRequest = previousBeforeRequest
                 XHRInterceptor.nativeXMLHttpRequest = NativeXMLHttpRequest
                 activeInstallation = null
                 active = false
@@ -175,14 +175,30 @@ class XHRInterceptor {
             this._timer = setTimeout(() => this._timeout(token), this.timeout)
         }
 
+        const signal = this._abortController.signal
         const context = {
-            signal: this._abortController.signal,
+            signal,
             nativeXMLHttpRequest: XHRInterceptor.nativeXMLHttpRequest
+        }
+        const snapshot = {
+            protocol: 'xhr',
+            url: this.config.url,
+            method: this.config.method,
+            headers: {...this.config.headers},
+            body,
+            signal
         }
 
         // 从已决 Promise 开始，确保同步抛错和异步拒绝进入同一错误路径。
         Promise.resolve()
-            .then(() => XHRInterceptor.transport(this, context))
+            .then(() => applyBeforeRequest(snapshot, XHRInterceptor.beforeRequest))
+            .then(request => {
+                if (!this._isActive(token)) return
+                this.config.url = request.url
+                this.config.headers = {...request.headers}
+                this.config.body = request.body
+                return XHRInterceptor.transport(request, context)
+            })
             .then(result => this._complete(result, token))
             .catch(error => this._fail(error, token))
     }

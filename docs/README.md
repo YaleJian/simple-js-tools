@@ -16,7 +16,9 @@ const {compare, object, request} = sTools
 
 - [`compare`](./compare.md)：判断值的类型。
 - [`object`](./object.md)：获取类型、克隆和深度合并普通数据。
-- [`request`](./request.md)：无感接管浏览器 `XMLHttpRequest` 和 fetch。
+- [`request`](./request.md)：无感接管浏览器 `XMLHttpRequest`、fetch 和 EventSource。
+  - [`createRequestPatch`](./request-patch.md)：统一请求改写。
+  - [`eventSource`](./request-event-source.md)：EventSource 与 SSE。
 
 ## 使用边界
 

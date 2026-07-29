@@ -60,6 +60,15 @@ git diff --check
 
 确认公共入口、测试、文档和 ESM/CJS/IIFE/UMD 产物一致。交付时只报告结果、兼容性变化和已知限制。
 
+### 网络拦截器约束
+
+- XHR、Fetch、EventSource 的请求改写必须复用 `createRequestPatch`，不得复制 Query 或 Header 合并代码。
+- `beforeRequest` 只接收隔离快照；新增字段前先证明三种协议确有共同语义。
+- 未显式替换 Fetch Body 时不得读取、克隆或缓存流。SSE 必须增量处理，禁止等连接结束后整体解析。
+- Transport 必须获得同一请求的 `AbortSignal` 和安装前的原生实现；关闭、超时或失效连接必须丢弃迟到结果。
+- 每种安装器必须验证重复安装、幂等恢复、同步异常和 Promise 拒绝。EventSource 还必须验证重连、
+  Last-Event-ID、UTF-8 分片和原生旁路。
+
 ---
 
 ## English translation
@@ -109,3 +118,12 @@ git diff --check
 ```
 
 Confirm that exports, tests, docs, and ESM/CJS/IIFE/UMD outputs agree. Report only outcomes, compatibility changes, and known limitations.
+
+### Network interceptor constraints
+
+- XHR, Fetch, and EventSource request rewriting must reuse `createRequestPatch`; do not duplicate query or header merging.
+- `beforeRequest` receives only an isolated snapshot. Prove a field has shared semantics across all three protocols before adding it.
+- Never read, clone, or buffer a Fetch body unless a replacement is explicit. Parse SSE incrementally, never only after the connection ends.
+- Give transports the request AbortSignal and the pre-install native implementation. Discard late results after close, timeout, or invalidation.
+- Test duplicate installation, idempotent restore, synchronous throws, and rejected promises for every installer. EventSource also requires reconnect,
+  Last-Event-ID, split UTF-8, and native-bypass coverage.

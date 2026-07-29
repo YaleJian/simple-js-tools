@@ -8,6 +8,7 @@ function waitForEvent(xhr, type) {
 
 test.afterEach(() => {
     XHRInterceptor.transport = null
+    XHRInterceptor.beforeRequest = null
     XHRInterceptor.debug = false
 })
 
@@ -25,10 +26,10 @@ test('XHRInterceptor 的可变数据按实例隔离', () => {
 test('install 无感替换 XMLHttpRequest 并可恢复', () => {
     function NativeXHR() {}
     const target = {XMLHttpRequest: NativeXHR}
-    const controller = XHRInterceptor.install(async () => ({}), target)
+    const controller = XHRInterceptor.install(async () => ({}), {target})
 
     assert.equal(target.XMLHttpRequest, XHRInterceptor)
-    assert.throws(() => XHRInterceptor.install(async () => ({}), target), /已安装/)
+    assert.throws(() => XHRInterceptor.install(async () => ({}), {target}), /已安装/)
 
     controller.restore()
     controller.restore()
@@ -41,7 +42,7 @@ test('成功响应遵循 XHR 状态与事件顺序', async () => {
         transportSignal = signal
         return {
             status: 201,
-            response: request.config.body,
+            response: request.body,
             responseHeaders: {'Content-Type': 'application/json'}
         }
     }
@@ -98,11 +99,77 @@ test('transport 同步异常按网络错误处理', async () => {
     assert.deepEqual(events, ['error', 'loadend'])
 })
 
+test('beforeRequest 可异步改写请求且快照与内部状态隔离', async () => {
+    function NativeXHR() {}
+    const target = {XMLHttpRequest: NativeXHR}
+    let captured
+    const controller = XHRInterceptor.install(request => {
+        captured = request
+        return {status: 200, response: request.body}
+    }, {
+        target,
+        beforeRequest: async snapshot => {
+            assert.equal(Object.isFrozen(snapshot), true)
+            assert.equal(Object.isFrozen(snapshot.headers), true)
+            return {
+                url: '/rewritten?remove=yes',
+                query: {remove: null, page: 2},
+                headers: {'X-Token': 'new', 'x-delete': null},
+                body: 'patched'
+            }
+        }
+    })
+
+    const xhr = new target.XMLHttpRequest()
+    xhr.open('POST', '/original')
+    xhr.setRequestHeader('x-token', 'old')
+    xhr.setRequestHeader('x-delete', 'yes')
+    const completed = waitForEvent(xhr, 'loadend')
+    xhr.send('original')
+    await completed
+
+    assert.equal(captured.protocol, 'xhr')
+    assert.equal(captured.url, '/rewritten?page=2')
+    assert.deepEqual(captured.headers, {'x-token': 'new'})
+    assert.equal(captured.body, 'patched')
+    assert.equal(xhr.responseText, 'patched')
+    controller.restore()
+})
+
+test('beforeRequest 拒绝时按 XHR 网络失败语义结束', async () => {
+    function NativeXHR() {}
+    const target = {XMLHttpRequest: NativeXHR}
+    let transportCalled = false
+    const controller = XHRInterceptor.install(() => {
+        transportCalled = true
+        return {}
+    }, {
+        target,
+        beforeRequest: async () => {
+            throw new Error('Hook 失败')
+        }
+    })
+    const xhr = new target.XMLHttpRequest()
+    xhr.open('GET', '/failed-hook')
+    const failed = waitForEvent(xhr, 'error')
+    xhr.send()
+    await failed
+
+    assert.equal(xhr.status, 0)
+    assert.equal(transportCalled, false)
+    controller.restore()
+})
+
 test('abort 取消 transport 并忽略迟到响应', async () => {
     let resolveTransport
     let transportSignal
+    let markTransportStarted
+    const transportStarted = new Promise(resolve => {
+        markTransportStarted = resolve
+    })
     XHRInterceptor.transport = (request, {signal}) => {
         transportSignal = signal
+        markTransportStarted()
         return new Promise(resolve => {
             resolveTransport = resolve
         })
@@ -116,7 +183,7 @@ test('abort 取消 transport 并忽略迟到响应', async () => {
 
     xhr.open('GET', '/slow')
     xhr.send()
-    await Promise.resolve()
+    await transportStarted
     xhr.abort()
     resolveTransport({status: 200, response: '迟到响应'})
     await Promise.resolve()

@@ -40,12 +40,13 @@ const response = await fetch('/api/items', {
 const data = await response.json()
 ```
 
-### `fetch.install(transport, target?)`
+### `fetch.install(transport, options?)`
 
 把目标环境的 `fetch` 替换为拦截函数。
 
 - `transport` 接收标准 `Request`。
-- `target` 默认当前 `window`，必须提供 `fetch`、`Request` 和 `Response`。
+- `options.target` 默认当前 `window`，必须提供 `fetch`、`Request` 和 `Response`。
+- `options.beforeRequest` 使用统一请求改写协议，详见[请求劫持总览](./request.md)。
 - 返回 `{restore()}`，用于恢复安装前的原生 fetch。
 - 同一环境重复安装会抛出错误。
 
@@ -76,6 +77,15 @@ return {
 ```
 
 描述对象会转换成标准 `Response`，因此调用方仍可使用 `text()`、`json()`、`blob()` 等原生方法。
+
+## SSE 与流式响应
+
+标准 `Response` 会原样返回。描述对象的 `body` 也可以是 `ReadableStream`，不会转成字符串或
+预先缓存完整响应。调用方可直接使用 `response.body.getReader()` 逐块读取。
+
+`content-type: text/event-stream` 不改变 Fetch 的 Promise/Response 语义。Transport 必须监听
+收到的 `signal`，并在取消时结束或报错底层 Stream。未通过 Hook 显式返回 `body` 时，拦截器
+不会读取或消费原 Body。
 
 ## 错误与取消
 

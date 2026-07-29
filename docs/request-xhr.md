@@ -9,12 +9,12 @@ const XHRInterceptor = sTools.request.xhr
 ## 推荐安装方式
 
 ```js
-const controller = XHRInterceptor.install(async (xhr, {signal, nativeXMLHttpRequest}) => {
+const controller = XHRInterceptor.install(async (request, {signal, nativeXMLHttpRequest}) => {
     const result = await sendByAnotherChannel({
-        method: xhr.config.method,
-        url: xhr.config.url,
-        headers: xhr.config.headers,
-        body: xhr.config.body,
+        method: request.method,
+        url: request.url,
+        headers: request.headers,
+        body: request.body,
         signal
     })
 
@@ -39,12 +39,13 @@ xhr.setRequestHeader('content-type', 'application/json')
 xhr.send(JSON.stringify({name: '测试'}))
 ```
 
-### `XHRInterceptor.install(transport, target?)`
+### `XHRInterceptor.install(transport, options?)`
 
 把目标环境的 `XMLHttpRequest` 替换为 `XHRInterceptor`，并返回 `{restore()}`。
 
 - `transport`：发送请求的函数。
-- `target`：可选运行环境，默认当前 `window`。
+- `options.target`：可选运行环境，默认当前 `window`。
+- `options.beforeRequest`：统一请求改写 Hook，详见[请求劫持总览](./request.md)。
 - 重复安装会抛出错误。
 - `restore()` 可重复调用，不会重复恢复。
 
@@ -54,6 +55,9 @@ Transport 的第二个参数包含：
 | --- | --- |
 | `signal` | 当前请求的 AbortSignal |
 | `nativeXMLHttpRequest` | 安装前的原生构造函数，供 transport 明确绕过劫持 |
+
+Transport 的第一个参数是改写后的请求快照。beta.9 以前接收 XHR 实例的 transport 不再兼容；
+本版本按新 API 直接升级。
 
 ## 兼容原调用方式
 
